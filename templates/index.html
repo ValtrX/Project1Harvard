@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600&display=swap" rel="stylesheet">
+    <title>Project 1</title>
+    <style>
+        .special-font{
+            font-family: 'EB Garamond', serif !important;
+            color: #4a3e3e;
+            font-size: 25px;
+        }
+        .list-style-none{
+            list-style-type: none;
+        }
+        table{
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="Header" class="d-flex justify-content-around w-100 mh-25 pt-2 pb-2" style="max-height: 80px;"> <!-- Header -->
+        <div class="logo">
+            <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" ></img> <!-- Logo text or image -->
+        </div>
+        <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center"> <!-- Search bar -->
+            <input class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search"
+              aria-label="Search">
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </form>
+        <ul class="d-flex list-style-none m-0 p-0">
+            <li class="d-flex  m-1 align-items-center"> <!-- Login -->
+                <a href="#" class="special-font display-5">Log in</a>
+            </li>
+            <li class="d-flex m-1 align-items-center"><!-- Sign up --> 
+                <a href="#" class="special-font">Sign up</a>
+            </li>
+        </ul>
+    </div>
+    <div id="Books-list" class="container">
+        <table>
+            <tr>
+                <td>
+                    <a href="#">Title of the Book:</a>
+                    <br>
+                    <span>by: </span>
+                    <br>
+                    <span>Published year:</span>
+                    <br>
+                    <span>numbers of reviews:</span>
+                    <hr>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="#">Title of the Book:</a>
+                    <br>
+                    <span>by: </span>
+                    <br>
+                    <span>Published year:</span>
+                    <br>
+                    <span>numbers of reviews:</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
