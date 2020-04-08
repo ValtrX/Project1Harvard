@@ -22,7 +22,16 @@ db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes 
 
 @app.route("/")
 def index():
-    books = db.execute("SELECT * FROM books").fetchall()
+    books = db.execute("SELECT * FROM books LIMIT 100").fetchall()
     return render_template("index.html", books=books)
 
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
+@app.route("/register")
+def register():
+    return render_template("register.html")
+
+if __name__=="__main__":
+    app.run(debug=true)
