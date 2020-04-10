@@ -1,57 +1,56 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Sign In | Books: Project 1
+    Log In | Books: Project 1
 {% endblock %}
 
 {% block body%}
 <div class="row align-items-center justify-content-center w-100 vh-100">
 	<div class="p-4 rounded shadow-lg hoverable" >
-		<form class="">
-			<h2 class="special-font text-center" style="font-size: 56px; font-weight: bold; color: initial;">
-				Welcome
-			</h2>
-			<br>
-			<div class="text-sm-center mb-5">
-				<img src="{{url_for('static', filename='logo.png')}}" class=" w-25"alt="AVATAR">
+		<h2 class="special-font text-center" style="font-size: 56px; font-weight: bold; color: initial;">
+			Welcome
+		</h2>
+		<br>
+		<div class="text-sm-center mb-5"> <!-- Logo -->
+			<img src="{{url_for('static', filename='logo.png')}}" class=" w-25"alt="AVATAR">
+		</div>
+		{% include "includes/_message.html" %}
+		<form method="POST">
+			<div class=""> <!-- Username input -->
+				<input class="form-control my-2" type="text" name="username" placeholder="Username" required>
 			</div>
 
-			<div class="" data-validate = "Enter username">
-				<input class="form-control my-2" type="text" name="username" placeholder="Username">
+			<div class="form-group" > <!-- Password input -->
+				<input class="form-control my-2" type="password" name="password" placeholder="Password" required>
+				<p>{% print(pasworddata) %}</p>
 			</div>
 
-			<div class="" data-validate="Enter password">
-				<input class="form-control my-2" type="password" name="pass" placeholder="Password">
-			</div>
+			<button class="btn btn-primary" type="submit">
+				Login
+			</button>
 
-			<div class="">
-				<button class="btn btn-primary">
-					Login
-				</button>
-			</div>
-
-			<ul class="list-style-none mt-5">
-				<li class="">
-					<span class="">
-						Forgot
-					</span>
-
-					<a href="#" class="txt2">
-						Username / Password?
-					</a>
-				</li>
-
-				<li>
-					<span class="">
-						Don’t have an account?
-					</span>
-
-					<a href="#" class="">
-						Sign up
-					</a>
-				</li>
-			</ul>
 		</form>
+		<ul class="list-style-none mt-5">
+			<li class="">
+				<span class="">
+					Forgot
+				</span>
+
+				<a href="{{ url_for('register') }}">
+					Username / Password?
+				</a>
+			</li>
+
+			<li>
+				<span class="">
+					Don’t have an account?
+				</span>
+
+				<a href="{{ url_for('register') }}">
+					Sign up
+				</a>
+			</li>
+		</ul>
 	</div>
 </div>
 {% endblock %}

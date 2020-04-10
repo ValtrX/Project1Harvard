@@ -16,16 +16,24 @@
         <i class="fa fa-search" aria-hidden="true"></i>
     </form>
     <ul class="d-flex list-style-none m-0 p-0">
+        {% if session.log %}
+        <li class="d-flex m-1 align-items-center"><!-- Sign up --> 
+            <a href="#" class="special-font">Hola</a>
+        </li>
+        {% else %}
         <li class="d-flex  m-1 align-items-center"> <!-- Login -->
-            <a href="#" class="special-font display-5">Log in</a>
+            <a href="{{ url_for('login') }}" class="special-font display-5">Log in</a>
         </li>
         <li class="d-flex m-1 align-items-center"><!-- Sign up --> 
-            <a href="#" class="special-font">Sign up</a>
+            <a href="{{ url_for('register') }}" class="special-font">Sign up</a>
         </li>
+        {% endif %}
+        
     </ul>
 </div>
 
 <div id="Books-list" class="container">
+    {% include "includes/_message.html" %}
     <table>
         {% for book in books[:10] %}
             <tr>
