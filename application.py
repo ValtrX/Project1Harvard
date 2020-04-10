@@ -19,6 +19,11 @@ engine = create_engine("postgres://ctcpxqjzdukioy:56a59ab6ea742f8153fbba5c2e3be7
 db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes sesiones para diferentes personas es decir si persona A ingresa a la pagina tendra una sesion diferente a Persona B con respecto a los cambios que se hagan en la base de datos, Ademas de que es el codigo que nos per
 
 books = db.execute("SELECT * FROM books LIMIT 100").fetchall() # Call books for index
+query_david = db.execute("SELECT password FROM users WHERE username = 'david'").fetchall()
+
+print(type(query_david))
+values = ''.join(str(v) for v in query_david)
+print(values.replace('(', '').replace(')', ''))
 
 @app.route("/")
 def index():
@@ -54,8 +59,13 @@ def login():
 
         usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone()
         passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone()
+        
+        # Formatting password
+        values = ''.join(str(v) for v in passworddata)
+        final_data = values.replace('(', '').replace(')', '')
 
-        pw_hash = bcrypt.generate_password_hash(passworddata).decode('utf-8')
+        pw_hash = bcrypt.generate_password_hash(final_data).decode('utf-8')
+        passcrypt = bcrypt.check_password_hash(final_data, password)
 
         if usernamedata is None:
             flash("No username","danger")
@@ -63,7 +73,7 @@ def login():
 
         else: 
             for password_data in passworddata:
-                if bcrypt.check_password_hash(pw_hash, passworddata):
+                if passcrypt:
                     flash("You are logged in!","success")
                     return redirect(url_for('index', books=books))
 
@@ -72,7 +82,10 @@ def login():
                     return redirect(url_for('login'))
 
     return render_template("login.html")
-                
+
+
+
+
 
 if __name__ =="__main__":
     app.run(debug=True)
