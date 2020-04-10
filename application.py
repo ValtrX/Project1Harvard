@@ -57,9 +57,6 @@ def login():
 
         pw_hash = bcrypt.generate_password_hash(passworddata).decode('utf-8')
 
-        print(passworddata)
-        print(pw_hash)
-
         if usernamedata is None:
             flash("No username","danger")
             return redirect(url_for('login'))
