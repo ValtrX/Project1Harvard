@@ -1,11 +1,10 @@
 import os #Importa library de Operation Systems
 
-from flask import Flask, render_template, session, request, flash, logging
+from flask import Flask, render_template, session, request, flash, logging, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_bcrypt import Bcrypt
-
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -31,20 +30,19 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         confirm = request.form.get("confirm") # Field where you confirm the password
-        pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        pw_hash = bcrypt.generate_password_hash(str(password)).decode('utf-8')
         
-
         if password == confirm:
 
             db.execute("INSERT INTO users(username, password) VALUES(:username, :password)",
             {"username":username,"password":pw_hash})
             db.commit()
             flash("Now you are registered, try to log in!","success")
-            return render_template("login.html")
+            return redirect(url_for('login'))
 
         else:
             flash("Password does not match","danger")
-            return render_template("register.html")
+            return redirect(url_for('register'))
 
     return render_template("register.html")
 
@@ -56,6 +54,7 @@ def login():
 
         usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone()
         passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone()
+
         pw_hash = bcrypt.generate_password_hash(passworddata).decode('utf-8')
 
         print(passworddata)
@@ -63,25 +62,20 @@ def login():
 
         if usernamedata is None:
             flash("No username","danger")
-            return render_template("login.html")
+            return redirect(url_for('login'))
 
         else: 
             for password_data in passworddata:
                 if bcrypt.check_password_hash(pw_hash, passworddata):
                     flash("You are logged in!","success")
-                    return render_template("index.html", books=books)
+                    return redirect(url_for('index', books=books))
 
                 else:
                     flash("Password does not match","danger")
-                    return render_template("login.html")
-        
-    
+                    return redirect(url_for('login'))
 
     return render_template("login.html")
                 
-        
-
-
 
 if __name__ =="__main__":
     app.run(debug=True)
