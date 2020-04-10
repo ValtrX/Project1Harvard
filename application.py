@@ -7,7 +7,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
+
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
@@ -56,6 +56,7 @@ def login():
         passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone()
 
         pw_hash = bcrypt.generate_password_hash(passworddata).decode('utf-8')
+        passcrypt = bcrypt.check_password_hash(passworddata, password)
 
         if usernamedata is None:
             flash("No username","danger")
@@ -63,7 +64,7 @@ def login():
 
         else: 
             for password_data in passworddata:
-                if bcrypt.check_password_hash(pw_hash, passworddata):
+                if passcrypt
                     flash("You are logged in!","success")
                     return redirect(url_for('index', books=books))
 
