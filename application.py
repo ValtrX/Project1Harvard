@@ -6,8 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_bcrypt import Bcrypt
 
+
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt()
+
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
