@@ -21,11 +21,6 @@ engine = create_engine("postgres://ctcpxqjzdukioy:56a59ab6ea742f8153fbba5c2e3be7
 db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes sesiones para diferentes personas es decir si persona A ingresa a la pagina tendra una sesion diferente a Persona B con respecto a los cambios que se hagan en la base de datos, Ademas de que es el codigo que nos per
 
 books = db.execute("SELECT * FROM books LIMIT 100").fetchall() # Call books for index
-query_david = db.execute("SELECT password FROM users WHERE username = 'david'").fetchall()
-
-print(type(query_david))
-values = ''.join(str(v) for v in query_david)
-print(values.replace('(', '').replace(')', ''))
 
 @app.route("/")
 def index():
