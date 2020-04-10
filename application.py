@@ -30,7 +30,7 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         confirm = request.form.get("confirm") # Field where you confirm the password
-        pw_hash = bcrypt.generate_password_hash(str(password)).decode('utf-8')
+        pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
         
         if password == confirm:
 
