@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt()
+app.secret_key = 'this-is-a-very-secret-key'
 
 
 # Configure session to use filesystem
@@ -22,10 +23,15 @@ db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes 
 
 books = db.execute("SELECT * FROM books LIMIT 100").fetchall() # Call books for index
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html", books=books)
-
+    if request.method =="GET":
+        booksearch = request.form.get("search")
+        booksearchdata = db.execute("SELECT * FROM books WHERE (author LIKE '%:booksearch%') OR (title LIKE '%:booksearch%') OR (isbn LIKE '%:booksearch%')",{"booksearch":booksearch}).fetchone()
+        print(bool(booksearchdata))
+        print(booksearchdata)
+    return render_template("index.html", books=books, booksearchdata=booksearchdata)
+    
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method =="POST":
@@ -50,19 +56,19 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method =="POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
         usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone()
         passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone()
-        
-        # Formatting password
-        values = ''.join(str(v) for v in passworddata)
-        final_data = values.replace('(', '').replace(')', '')
 
-        pw_hash = bcrypt.generate_password_hash(final_data).decode('utf-8')
-        passcrypt = bcrypt.check_password_hash(final_data, password)
+        # Formatting password & Username
+        f_pass = ''.join(passworddata) #Formated password
+
+        pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8')
+        passcrypt = bcrypt.check_password_hash(f_pass, password)
 
         if usernamedata is None:
             flash("No username","danger")
@@ -71,8 +77,11 @@ def login():
         else: 
             for password_data in passworddata:
                 if passcrypt:
+                    session["logged_in"] = True
+                    session['username'] = username
+                    
                     flash("You are logged in!","success")
-                    return redirect(url_for('index', books=books))
+                    return render_template("index.html", books=books)
 
                 else:
                     flash("Password does not match","danger")
@@ -81,6 +90,11 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Bye! You are logged out now","danger")
+    return redirect(url_for('login'))
 
 
 
