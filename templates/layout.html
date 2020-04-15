@@ -6,6 +6,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='logo.png')}}">
     <title>{% block title %}{% endblock %}</title>
     <style>
         .special-font{
@@ -26,7 +27,7 @@
 <body>
     <div id="Header" class="d-flex justify-content-around w-100 mh-25 pt-2 pb-2 shadow" style="max-height: 80px;"> <!-- Header -->
         <div class="logo">
-            <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" ></img> <!-- Logo text or image -->
+            <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" href="{{ url_for('index') }}" ></img> <!-- Logo text or image -->
         </div>
         <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET"> <!-- Search bar -->
                 <input class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search" name="search">

@@ -43,9 +43,11 @@ def index():
 
 @app.route("/book/<int:book_id>") #Book details page
 def book(book_id):
-
+    url = request.referrer
+    print(url)
     book = db.execute("SELECT * FROM books WHERE book_id=:id",{"id":book_id}).fetchone()
-    return render_template("book.html", books=books, book=book)
+    return render_template("book.html", books=books, book=book, url=url)
+    
 
 
 @app.route("/register", methods=["GET", "POST"]) #Register Page
