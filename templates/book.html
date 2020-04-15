@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Books: Project 1
+{% endblock %}
+
+{% block body %}
+
+<div class="container"> <!-- Book Container -->
+    <h1>{{ book.title}}</h1>
+    <div class="d-flex">
+        <div class="p-2">
+            <h3>Author: {{ book.author}}</h3>
+            <h3>Publication Year: {{ book.year}}</h3>
+        </div>
+        <div class="p-2">
+            <h3>ISBN number: {{ book.isbn}}</h3>
+            <h3>Total No of Reviews: </h3>
+        </div>
+    </div>
+    
+    
+</div>
+{% endblock %}

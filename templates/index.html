@@ -6,73 +6,46 @@
 
 {% block body %}
 
-<div id="Header" class="d-flex justify-content-around w-100 mh-25 pt-2 pb-2" style="max-height: 80px;"> <!-- Header -->
-    <div class="logo">
-        <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" ></img> <!-- Logo text or image -->
-    </div>
-    <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET"> <!-- Search bar -->
-            <input class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search" name="search">
-        <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-    </form>
-    <ul class="d-flex list-style-none m-0 p-0">
-        {% if session.logged_in %}
-        <li class="d-flex m-1 align-items-center">
-            <a href="#" class="special-font">{{ session.username }}</a>
-        </li>
-        <li class="d-flex m-1 align-items-center"><!-- Sign up --> 
-            <a href="/logout" class="special-font">logout</a>
-        </li>
-        {% else %}
-        <li class="d-flex  m-1 align-items-center"> <!-- Login -->
-            <a href="{{ url_for('login') }}" class="special-font display-5">Log in</a>
-        </li>
-        <li class="d-flex m-1 align-items-center"><!-- Sign up --> 
-            <a href="{{ url_for('register') }}" class="special-font">Sign up</a>
-        </li>
-        {% endif %}
-
-    </ul>
-</div>
-
 <div id="Books-list" class="container">
     {% include "includes/_message.html" %}
-    <table>{% if booksearchdata is not true %}
-            {% for book in books[:10] %}
-                <tr>
-                    <td>
-                        <a href="#">Title of the Book: {{ book.title }}</a>
-                        <br>
-                        <span>by: {{ book.author }}</span>
-                        <br>
-                        <span>Published year: {{ book.year }}</span>
-                        <br>
-                        <span>numbers of reviews:</span>
-                        <br>
-                        <span>isbn: {{ book.isbn }}</span>
-                        <hr>
-                    </td>
-                </tr>
-            {% endfor %}
-            {% else %} 
-                {% for book in booksearchdata[:10] %}
+    <table>
+            {% if booksearchdata is none %}
+                {% for book in books[:10] %}
                     <tr>
                         <td>
-                            <a href="#">Title of the Book: {{ book.title }}</a>
+                            <a href="{{ url_for('book', book_id=book.book_id) }}">Title of the Book: {{ book.title }}</a>
                             <br>
                             <span>by: {{ book.author }}</span>
                             <br>
                             <span>Published year: {{ book.year }}</span>
                             <br>
-                            <span>numbers of reviews:</span>
+                            <span>Book ID: {{ book.book_id }}</span>
+                            <!-- <span>numbers of reviews:</span>
                             <br>
                             <span>isbn: {{ book.isbn }}</span>
-                            <hr>
+                            <hr> -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for book in booksearchdata[:10] %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('book', book_id=book.book_id) }}">Title of the Book: {{ book.title }}</a>
+                            <br>
+                            <span>by: {{ book.author }}</span>
+                            <br>
+                            <span>Published year: {{ book.year }}</span>
+                            <br>
+                            <span>Book ID: {{ book.book_id }}</span>
+                            <!-- <span>numbers of reviews:</span>
+                            <br>
+                            <span>isbn: {{ book.isbn }}</span>
+                            <hr> -->
                         </td>
                     </tr>
                 {% endfor %}
             {% endif %}
-            
-            
     </table>
 </div>
 {% endblock %}

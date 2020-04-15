@@ -1,4 +1,5 @@
 import os #Importa library de Operation Systems
+import requests #something about the API
 
 from flask import Flask, render_template, session, request, flash, logging, redirect, url_for
 from flask_session import Session
@@ -7,9 +8,14 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_bcrypt import Bcrypt
 
 
+#FLASK Bcrypt code 
 app = Flask(__name__)
 bcrypt = Bcrypt()
 app.secret_key = 'this-is-a-very-secret-key'
+
+#API request 1st code 
+res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "oa9BAej7RbvIY4luSUz8A", "isbns": "9781632168146"})
+print(res.json())
 
 
 # Configure session to use filesystem
@@ -26,13 +32,23 @@ books = db.execute("SELECT * FROM books LIMIT 100").fetchall() # Call books for 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method =="GET":
-        booksearch = request.form.get("search")
-        booksearchdata = db.execute("SELECT * FROM books WHERE (author LIKE '%:booksearch%') OR (title LIKE '%:booksearch%') OR (isbn LIKE '%:booksearch%')",{"booksearch":booksearch}).fetchone()
-        print(bool(booksearchdata))
-        print(booksearchdata)
+        booksearchrequest = request.args.get('search') #Book search request
+        booksearch = "%{}%".format(booksearchrequest) #Book search result formating 
+
+        #Book search result Query
+        booksearchdata = db.execute("SELECT * FROM books WHERE (author LIKE :booksearch) OR (title LIKE :booksearch) OR (isbn LIKE :booksearch)",{"booksearch":booksearch}).fetchall()
+        
+
     return render_template("index.html", books=books, booksearchdata=booksearchdata)
-    
-@app.route("/register", methods=["GET", "POST"])
+
+@app.route("/book/<int:book_id>") #Book details page
+def book(book_id):
+
+    book = db.execute("SELECT * FROM books WHERE book_id=:id",{"id":book_id}).fetchone()
+    return render_template("book.html", books=books, book=book)
+
+
+@app.route("/register", methods=["GET", "POST"]) #Register Page
 def register():
     if request.method =="POST":
         username = request.form.get("username")
@@ -54,7 +70,7 @@ def register():
 
     return render_template("register.html")
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"]) #Login page
 def login():
 
     if request.method =="POST":
@@ -66,35 +82,37 @@ def login():
 
         # Formatting password & Username
         f_pass = ''.join(passworddata) #Formated password
+        print(f_pass)
 
-        pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8')
+        pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8') #Passowrd Hashing
         passcrypt = bcrypt.check_password_hash(f_pass, password)
 
-        if usernamedata is None:
+        if usernamedata is None: #If There's no user
             flash("No username","danger")
             return redirect(url_for('login'))
 
         else: 
-            for password_data in passworddata:
+            for password_data in passworddata: #Search for a user and then compare the passwords
                 if passcrypt:
                     session["logged_in"] = True
                     session['username'] = username
                     
                     flash("You are logged in!","success")
-                    return render_template("index.html", books=books)
+                    return redirect(url_for('index'))
 
                 else:
-                    flash("Password does not match","danger")
+                    flash("Password does not match","danger") #If the password does not match say "Password does not match"
                     return redirect(url_for('login'))
 
     return render_template("login.html")
 
 
-@app.route("/logout")
+@app.route("/logout") #Logout function
 def logout():
     session.clear()
     flash("Bye! You are logged out now","danger")
     return redirect(url_for('login'))
+
 
 
 
