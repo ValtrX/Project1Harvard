@@ -14,8 +14,31 @@ bcrypt = Bcrypt()
 app.secret_key = 'this-is-a-very-secret-key'
 
 #API request 1st code 
-res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "oa9BAej7RbvIY4luSUz8A", "isbns": "9781632168146"})
-print(res.json())
+
+
+res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "P1SeBqMxamC66BsKtE5BOg", "isbns": "1857231082"})
+data = res.json()
+
+data_inside = data['books'] # Returning the 'books' dictionary
+
+for item in data_inside: #Getting values from the dictionary 
+
+    book_json_isbn = item['isbn']
+    book_json_total = item['work_ratings_count']
+    book_json_avg = item['average_rating']
+
+    print(f"FIRST PRINT: isbn number is: {book_json_isbn}, Total reviews or rating: {book_json_total}, Average rating: {book_json_avg}")
+
+
+
+    
+
+
+# Just Being Curious | How to get the reviews_widget
+# res = requests.get("https://www.goodreads.com/book/isbn/0590353403?key=P1SeBqMxamC66BsKtE5BOg?format=json", params={"format": "json", "user_id": "113261926", "isbn": "1857231082"})
+# print(res.json()) 
+
+
 
 
 # Configure session to use filesystem
@@ -43,10 +66,29 @@ def index():
 
 @app.route("/book/<int:book_id>") #Book details page
 def book(book_id):
-    url = request.referrer
-    print(url)
-    book = db.execute("SELECT * FROM books WHERE book_id=:id",{"id":book_id}).fetchone()
-    return render_template("book.html", books=books, book=book, url=url)
+    url = request.referrer #Go back last URL
+    
+    book = db.execute("SELECT * FROM books WHERE book_id=:id",{"id":book_id}).fetchone() #SQL command to get the book ID
+
+    book_isbn = db.execute("SELECT isbn FROM books WHERE book_id=:id",{"id":book_id}).fetchone() #SQL command to get isbn number
+
+    f_isbn = ''.join(book_isbn) # Formated isbn
+    
+    isbn_res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "P1SeBqMxamC66BsKtE5BOg", "isbns": "{}".format(f_isbn)}) # API code to get ISBN number from book_isbn variable
+
+    isbn_json = isbn_res.json() #Converting the Request to JSON
+
+    isbn_data = isbn_json['books'] # Returning the 'books' dictionary
+
+    for item in isbn_data: #Getting values from the dictionary 
+
+        book_api_isbn = item['isbn']
+        book_api_total = item['work_ratings_count']
+        book_api_avg = item['average_rating']
+
+        print(f"isbn number is: {book_api_isbn}, Total reviews or rating: {book_api_total}, Average rating: {book_api_avg}") #Just a print to check if everything is working :)
+        
+    return render_template("book.html", books=books, book=book, url=url, book_api_total=book_api_total, book_api_avg=book_api_avg)
     
 
 

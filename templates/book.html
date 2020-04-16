@@ -16,10 +16,31 @@
         </div>
         <div class="p-2">
             <h3>ISBN number: {{ book.isbn}}</h3>
-            <h3>Total No of Reviews: </h3>
+            <h3>Total № of Reviews: {{ book_api_total }} <h3>
+            <h3>Average book rating: {{ book_api_avg }}</h3>
         </div>
     </div>
-    
+    <div class="form-group"> <!-- Make a review -->
+
+        <h5>
+            Leave a Review:
+        </h5>
+
+        <label for="Review_Rating">Rating: </label>
+        <select class="form-control" id="Review_Rating">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+          
+
+        <label for="Review_Content">Review: </label>
+        <textarea class="form-control" id="Review_Content" rows="3"></textarea>
+
+        <button type="submit" class="btn btn-primary mb-2 mt-1">Submit review</button>
+    </div>
     
 </div>
 {% endblock %}
