@@ -20,10 +20,12 @@
                             <span>Published year: {{ book.year }}</span>
                             <br>
                             <span>Book ID: {{ book.book_id }}</span>
-                            <!-- <span>numbers of reviews:</span>
+                            
+                            <span>numbers of reviews: {{ book_api_total }}</span>
                             <br>
-                            <span>isbn: {{ book.isbn }}</span>
-                            <hr> -->
+                            <span>Average rating: {{ book_api_avg }}</span>
+                            
+                            <hr>
                         </td>
                     </tr>
                 {% endfor %}
@@ -38,13 +40,15 @@
                             <span>Published year: {{ book.year }}</span>
                             <br>
                             <span>Book ID: {{ book.book_id }}</span>
-                            <!-- <span>numbers of reviews:</span>
                             <br>
-                            <span>isbn: {{ book.isbn }}</span>
-                            <hr> -->
+                            <span>numbers of reviews: {{ book_api_total }}</span>
+                            <br>
+                            <span>Average rating: {{ book_api_avg }}</span>
+                            
                         </td>
                     </tr>
                 {% endfor %}
+                
             {% endif %}
     </table>
 </div>

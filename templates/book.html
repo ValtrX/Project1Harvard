@@ -8,16 +8,18 @@
 
 <div class="container"> <!-- Book Container -->
     <a href="{{ url }}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Go back</a>
-    <h1>{{ book.title }}</h1>
-    <div class="d-flex">
+    <h1 class="text-center pb=2">{{ book.title }}</h1>
+    <div class="d-flex justify-content-center">
         <div class="p-2">
-            <h3>Author: {{ book.author }}</h3>
-            <h3>Publication Year: {{ book.year }}</h3>
-            <h3 class="pt-2">Average book rating: {{ book_api_avg }}</h3>
+            <h4>Author: {{ book.author }}</h4>
+            <h4>Publication Year: {{ book.year }}</h4>
+            <h4>ISBN number: {{ book.isbn }}</h4>
+            
         </div>
         <div class="p-2">
-            <h3>ISBN number: {{ book.isbn }}</h3>
-            <h3>Total № of Reviews: {{ book_api_total }}</h3>
+            <img src="{{url_for('static', filename='goodreads.png')}}" height="24" alt="goodreads-logo">
+            <h4>Total № of Reviews: {{ book_api_total }}</h4>
+            <h4 class="pt-2">Average book rating: {{ book_api_avg }}</h4>
         </div>
         
     </div>

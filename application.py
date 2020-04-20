@@ -1,11 +1,13 @@
 import os #Importa library de Operation Systems
 import requests #something about the API
+import itertools
 
 from flask import Flask, render_template, session, request, flash, logging, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_bcrypt import Bcrypt
+from itertools import chain # Format searching tuples for searching
 
 #FLASK Bcrypt code 
 app = Flask(__name__)
@@ -40,6 +42,10 @@ db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes 
 
 books = db.execute("SELECT * FROM books LIMIT 1").fetchall() # Call books for index
 
+
+
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method =="GET":
@@ -47,14 +53,28 @@ def index():
         booksearch = "%{}%".format(booksearchrequest) #Book search result formating 
 
         #Book search result Query
-        booksearchdata = db.execute("SELECT * FROM books WHERE (author LIKE :booksearch) OR (title LIKE :booksearch) OR (isbn LIKE :booksearch)",{"booksearch":booksearch}).fetchall()
-        print(booksearchdata)
+        booksearchdata = db.execute("SELECT * FROM books WHERE (author ILIKE :booksearch) OR (title ILIKE :booksearch) OR (isbn ILIKE :booksearch)",{"booksearch":booksearch}).fetchall()
+        isbn_search = db.execute("SELECT isbn FROM books WHERE (author ILIKE :booksearch) OR (title ILIKE :booksearch) OR (isbn ILIKE :booksearch)",{"booksearch":booksearch}).fetchall()
+        f_isbn_search = ','.join(map(str,chain.from_iterable(isbn_search))) #Getting isbn numbers of the search
 
-    return render_template("index.html", books=books, booksearchdata=booksearchdata)
+        test_isbn = requests.get("https://www.goodreads.com/book/review_counts.json", 
+        params={"key": "P1SeBqMxamC66BsKtE5BOg", "isbns": "{}".format(f_isbn_search)})
+        isbn_json = test_isbn.json()
+        isbn_data = isbn_json['books']
+        print(isbn_data)
+
+        for item in isbn_data: #Getting values from the dictionary 
+
+            book_api_total = item['work_ratings_count']
+            book_api_avg = item['average_rating'] 
+
+            print(book_api_total, book_api_avg)  
+            
+    return render_template("index.html", books=books, booksearchdata=booksearchdata, book_api_avg=book_api_avg, book_api_total=book_api_total, isbn_data=isbn_data, itertools=itertools)
 
 @app.route("/book/<int:book_id>", methods=["GET","POST"]) #Book details page
 def book(book_id):
-
+    
     url = request.referrer #Go back last URL
         
     book = db.execute("SELECT * FROM books WHERE book_id=:id",{"id":book_id}).fetchone() #SQL command to get the book ID
@@ -63,7 +83,8 @@ def book(book_id):
 
     f_isbn = ''.join(book_isbn) # Formated isbn
 
-    isbn_res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "P1SeBqMxamC66BsKtE5BOg", "isbns": "{}".format(f_isbn)}) # API code to get ISBN number from book_isbn variable
+    isbn_res = requests.get("https://www.goodreads.com/book/review_counts.json", 
+    params={"key": "P1SeBqMxamC66BsKtE5BOg", "isbns": "{}".format(f_isbn)}) # API code to get ISBN number from book_isbn variable
 
     isbn_json = isbn_res.json() #Converting the Request to JSON
 
@@ -107,6 +128,7 @@ def book(book_id):
                         
     return render_template("book.html", books=books, book=book, url=url, book_api_total=book_api_total, book_api_avg=book_api_avg, book_reviews=book_reviews)
     
+    
 @app.route("/register", methods=["GET", "POST"]) #Register Page
 def register():
     if request.method =="POST":
@@ -141,7 +163,6 @@ def login():
 
         # Formatting password & Username
         f_pass = ''.join(passworddata) #Formated password
-        print(f_pass)
 
         pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8') #Passowrd Hashing
         passcrypt = bcrypt.check_password_hash(f_pass, password)

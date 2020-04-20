@@ -25,11 +25,13 @@
     </style>
 </head>
 <body>
-    <div id="Header" class="d-flex justify-content-around w-100 mh-25 pt-2 pb-2 shadow" style="max-height: 80px;"> <!-- Header -->
-        <div class="logo">
-            <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" href="{{ url_for('index') }}" ></img> <!-- Logo text or image -->
+    <div id="Header" class="d-flex justify-content-around w-100 mh-25 pt-2 pb-2 shadow mb-4" style="max-height: 80px;"> <!-- Header -->
+        <div class="logo"> <!-- Logo text or image -->
+            <a href="{{ url_for('index') }}">
+                <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" ></img>
+            </a> 
         </div>
-        <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET"> <!-- Search bar -->
+        <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET" action="{{ url_for('index') }}"> <!-- Search bar -->
                 <input class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search" name="search">
             <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
         </form>
