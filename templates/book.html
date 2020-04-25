@@ -27,9 +27,9 @@
     </div>
 
     <!-- Review Area -->
-    {% include "includes/_message.html" %}
+    {% if session.logged_in %}
     <form class="form-group" method="POST"> <!-- Make a review -->
-
+        <h4>{% include "includes/_message.html" %}</h4>
         <h5>
             Leave a Review:
         </h5>
@@ -47,7 +47,9 @@
 
         <button type="submit" class="btn btn-primary mb-2 mt-2">Submit review</button>
     </form>
-
+    {% else %}
+    <h4> {% include "includes/_message.html" %} </h4>
+    {% endif %}
     <!-- Reviews -->
     <table> 
         {% for review in book_reviews %} 

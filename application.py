@@ -36,16 +36,16 @@ books = db.execute("SELECT * FROM books ORDER BY year DESC").fetchall()
 @app.route("/", methods=["GET", "POST"]) 
 def index(): 
     if request.method =="GET":
-
+        
         # Getting data from input 
         booksearchrequest = request.args.get('search') # Get text from the search input 
         booksearch = "%{}%".format(booksearchrequest) # Formating input get  
 
-        # Queries
+            # Queries
         booksearchdata = db.execute("SELECT * FROM books WHERE (author ILIKE :booksearch) OR (title ILIKE :booksearch) OR (isbn ILIKE :booksearch)",{"booksearch":booksearch}).fetchall() # Book search result Query
-        breviews = db.execute("SELECT books.book_id, reviews.content, books.title, users.username FROM reviews JOIN books ON reviews.book_id = books.book_id JOIN users ON reviews.user_id = users.user_id").fetchall() # Get recent reviews query
-        
-        # Check if the result of the search is empty
+        breviews = db.execute("SELECT books.book_id, reviews.content, reviews.rating, books.title, users.username FROM reviews JOIN books ON reviews.book_id = books.book_id JOIN users ON reviews.user_id = users.user_id ORDER BY books.book_id DESC").fetchall() # Get recent comments
+            
+            # Check if the result of the search is empty
         bcheck = booksearchdata == [] and booksearchrequest is not None 
     
     return render_template("index.html", bcheck=bcheck, books=books, breviews=breviews, booksearchdata=booksearchdata, booksearchrequest=booksearchrequest)
@@ -53,6 +53,7 @@ def index():
 @app.route("/book/<int:book_id>", methods=["GET","POST"]) #Book details page
 def book(book_id):
     # Go back last URL
+
     url = request.referrer 
 
     # Queries    
@@ -77,38 +78,39 @@ def book(book_id):
         book_api_total = item['work_ratings_count']
         book_api_avg = item['average_rating']
 
-    # Getting username from the session
-    logged_in_user = session['username'] 
+    if session.get('logged_in') == True:
+        # Getting username from the session
+        logged_in_user = session['username'] 
 
-    user_id = db.execute("SELECT user_id FROM users WHERE username=:name",{"name":logged_in_user}).fetchone() # Get user_id from username of logged_in_user
+        user_id = db.execute("SELECT user_id FROM users WHERE username=:name",{"name":logged_in_user}).fetchone() # Get user_id from username of logged_in_user
 
-    for name in user_id: #Getting values from user_id as they are 'int' instead 'str'
-        f_user_id = name
-    
-    # Submit a review code
-    if request.method =="POST":
+        for name in user_id: #Getting values from user_id as they are 'int' instead 'str'
+            f_user_id = name
+        if request.method =="POST":
 
-        # Getting data from inputs
-        rating = request.form.get("rating")
-        content = request.form.get("content")
+            # Getting data from inputs
+            rating = request.form.get("rating")
+            content = request.form.get("content")
 
-        # Queries 
-        user_reviewed_before = db.execute("SELECT * FROM reviews WHERE user_id = :user_id AND book_id = :book_id",  {"user_id":f_user_id, "book_id": book_id}).fetchone()
+            # Queries 
+            user_reviewed_before = db.execute("SELECT * FROM reviews WHERE user_id = :user_id AND book_id = :book_id",  {"user_id":f_user_id, "book_id": book_id}).fetchone()
 
-        # Check if the user has commented before
-        if user_reviewed_before:
-            flash("you've already submit a review","danger")
+            # Check if the user has commented before
+            if user_reviewed_before:
+                flash("You've already submit a review","danger")
 
-        # Insert review into the database if the content input is not empty
-        elif content is not None:
+            # Insert review into the database if the content input is not empty
+            elif content is not None:
 
-            # Query to insert review
-            db.execute("INSERT INTO reviews(book_id, user_id, content, rating) VALUES(:book_id, :user_id, :content, :rating)",
-            {"book_id":book_id, "user_id":f_user_id, "content":content, "rating":rating})
-            db.commit()
+                # Query to insert review
+                db.execute("INSERT INTO reviews(book_id, user_id, content, rating) VALUES(:book_id, :user_id, :content, :rating)",
+                {"book_id":book_id, "user_id":f_user_id, "content":content, "rating":rating})
+                db.commit()
 
-        return redirect(url_for('book', book_id=book_id))
-                        
+            return redirect(url_for('book', book_id=book_id))
+    else: 
+        flash("You must be logged in to make a review","danger")
+     
     return render_template("book.html", books=books, book=book, url=url, book_api_total=book_api_total, book_api_avg=book_api_avg, book_reviews=book_reviews)
     
     
