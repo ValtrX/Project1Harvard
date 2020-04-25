@@ -8,8 +8,37 @@
 
 <div id="Books-list" class="container">
     {% include "includes/_message.html" %}
+     
+<!-- Check if there's a book -->
+    {% if booksearchrequest %}
     <table>
-            {% if booksearchdata is none %}
+        {% for book in booksearchdata[:10] %} 
+            <tr>
+                <td>
+                    <a href="{{ url_for('book', book_id=book.book_id) }}">Title of the Book: {{ book.title }}</a>
+                    <br>
+                    <span>by: {{ book.author }}</span>
+                    <br>
+                    <span>Published year: {{ book.year }}</span>
+                    <br>
+                    <span>Book ID: {{ book.book_id }}</span>
+                    <br>
+                    <hr>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+  
+<!-- If the search bar is empty do this: -->
+    {% elif booksearchrequest is not none %}
+    <h2> Try to search some book!!! </h2>
+
+    {% else %} 
+    <div class="d-flex justify-content-between">
+        <div class="mr-5">
+            <table>   
+                <!-- Display Recent books -->
+                <h2>Recent books: </h2> 
                 {% for book in books[:10] %}
                     <tr>
                         <td>
@@ -20,36 +49,38 @@
                             <span>Published year: {{ book.year }}</span>
                             <br>
                             <span>Book ID: {{ book.book_id }}</span>
-                            
-                            <span>numbers of reviews: {{ book_api_total }}</span>
-                            <br>
-                            <span>Average rating: {{ book_api_avg }}</span>
-                            
-                            <hr>
                         </td>
                     </tr>
                 {% endfor %}
-            {% else %}
-                {% for book in booksearchdata[:10] %}
-                    <tr>
-                        <td>
-                            <a href="{{ url_for('book', book_id=book.book_id) }}">Title of the Book: {{ book.title }}</a>
-                            <br>
-                            <span>by: {{ book.author }}</span>
-                            <br>
-                            <span>Published year: {{ book.year }}</span>
-                            <br>
-                            <span>Book ID: {{ book.book_id }}</span>
-                            <br>
-                            <span>numbers of reviews: {{ book_api_total }}</span>
-                            <br>
-                            <span>Average rating: {{ book_api_avg }}</span>
-                            
-                        </td>
-                    </tr>
-                {% endfor %}
-                
-            {% endif %}
-    </table>
+            </table>
+        </div>
+            <div>
+                <table> 
+                <!-- Display recent commented books --> 
+                <h2>Recent comments: </h2> 
+                    {% for book in breviews[:10] %}
+                        <tr>
+                            <td>
+                                <br>
+                                <h5>" {{ book.content }} "</h5>
+                                <div class="d-flex justify-content-between">  
+                                <a href="{{ url_for('book', book_id=book.book_id) }}">{{ book.title }}</a> 
+                                <span>by: {{ book.username }}</span>
+                            </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+            
+    {% endif %}
+
+    <!-- if your book doesn't exist show this: -->
+
+    {% if bcheck %}
+    <h2>There's nothing for: "{{ booksearchrequest }}"</h2>
+    {% endif %}
+    
 </div>
 {% endblock %}

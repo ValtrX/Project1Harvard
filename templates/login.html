@@ -12,7 +12,7 @@
 		</h2>
 		<br>
 		<div class="text-sm-center mb-5"> <!-- Logo -->
-			<img src="{{url_for('static', filename='logo.png')}}" class=" w-25"alt="AVATAR">
+			<img src="{{url_for('static', filename='logo.png')}}" class=" w-25"alt="Logo">
 		</div>
 		{% include "includes/_message.html" %}
 		<form method="POST">
@@ -24,24 +24,14 @@
 				<input class="form-control my-2" type="password" name="password" placeholder="Password" required>
 			</div>
 
-			<button class="btn btn-primary" type="submit">
+			<button class="btn btn-primary" type="submit"> <!-- Login button -->
 				Login
 			</button>
 
 		</form>
 		<ul class="list-style-none mt-5">
-			<li class="">
-				<span class="">
-					Forgot
-				</span>
-
-				<a href="{{ url_for('register') }}">
-					Username / Password?
-				</a>
-			</li>
-
 			<li>
-				<span class="">
+				<span>
 					Don’t have an account?
 				</span>
 

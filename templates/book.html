@@ -6,23 +6,27 @@
 
 {% block body %}
 
-<div class="container"> <!-- Book Container -->
-    <a href="{{ url }}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Go back</a>
+<!-- Book Container -->
+<div class="container"> 
+    <a href="{{ url }}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Go back</a> <!-- Go back button -->
+    
+    <!-- Book Area -->
     <h1 class="text-center pb=2">{{ book.title }}</h1>
     <div class="d-flex justify-content-center">
         <div class="p-2">
             <h4>Author: {{ book.author }}</h4>
             <h4>Publication Year: {{ book.year }}</h4>
             <h4>ISBN number: {{ book.isbn }}</h4>
-            
         </div>
+    <!-- Goodreads Area -->
         <div class="p-2">
             <img src="{{url_for('static', filename='goodreads.png')}}" height="24" alt="goodreads-logo">
             <h4>Total № of Reviews: {{ book_api_total }}</h4>
             <h4 class="pt-2">Average book rating: {{ book_api_avg }}</h4>
         </div>
-        
     </div>
+
+    <!-- Review Area -->
     {% include "includes/_message.html" %}
     <form class="form-group" method="POST"> <!-- Make a review -->
 
@@ -30,7 +34,7 @@
             Leave a Review:
         </h5>
 
-        <label for="Review_Rating">Rating: </label>
+        <label for="Review_Rating">Rating: </label> <!-- Give rating between 1 to 5-->
         <select class="form-control" id="Review_Rating" name="rating">
             <option>1</option>
             <option>2</option>
@@ -44,8 +48,8 @@
         <button type="submit" class="btn btn-primary mb-2 mt-2">Submit review</button>
     </form>
 
-    <table> <!-- Reviews -->
-       
+    <!-- Reviews -->
+    <table> 
         {% for review in book_reviews %} 
         <tr> <!-- individual review -->
             <div class="container p-3 my-3 border"> 

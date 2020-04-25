@@ -22,6 +22,12 @@
         table{
             width: 100%;
         }
+        .special-search-button{
+            border-color: transparent !important;
+            background-color: white !important;
+            padding: 0;
+            margin-left: -32px;
+        }
     </style>
 </head>
 <body>
@@ -31,11 +37,21 @@
                 <img src="{{url_for('static', filename='logo.png')}}" alt="Logo" class="h-100" ></img>
             </a> 
         </div>
-        <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET" action="{{ url_for('index') }}"> <!-- Search bar -->
-                <input class="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search" name="search">
-            <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <!-- Search bar -->
+        <form class="form-inline active-cyan-4 w-50 text-center d-flex justify-content-center" method="GET" action="{{ url_for('index') }}"> 
+                <input class="form-control form-control-sm w-75" type="text" placeholder="Search" name="search">
+            
+                <!-- Search button-->
+                <button type="submit" class="special-search-button"> 
+                <i class=" fa fa-search" aria-hidden="true"></i>
+            </button>
         </form>
+
+        <!-- User header area-->
         <ul class="d-flex list-style-none m-0 p-0">
+
+            <!-- Show Username and Logout-->
             {% if session.logged_in %}
             <li class="d-flex m-1 align-items-center">
                 <a href="#" class="special-font">{{ session.username }}</a>
@@ -44,6 +60,8 @@
                 <a href="/logout" class="special-font">logout</a>
             </li>
             {% else %}
+
+            <!-- Show Login and Sign up -->
             <li class="d-flex  m-1 align-items-center"> <!-- Login -->
                 <a href="{{ url_for('login') }}" class="special-font display-5">Log in</a>
             </li>
@@ -52,6 +70,7 @@
             </li>
             {% endif %}
         </ul>
+        
     </div>
     {% block body %}
     {% endblock %}
