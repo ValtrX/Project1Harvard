@@ -1,5 +1,4 @@
-import os #Importa library de Operation Systems
-import requests #something about the API
+import os, requests #Importa library de Operation Systems
 
 from flask import Flask, render_template, session, request, flash, logging, redirect, url_for, jsonify
 from flask_session import Session
@@ -17,7 +16,6 @@ app.secret_key = 'this-is-a-very-secret-key'
 # res = requests.get("https://www.goodreads.com/book/isbn/0590353403?key=P1SeBqMxamC66BsKtE5BOg?format=json", params={"format": "json", "user_id": "113261926", "isbn": "1857231082"})
 # print(res.json()) 
 
-
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -25,16 +23,14 @@ Session(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
-db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY) Creas diferentes sesiones para diferentes personas es decir si persona A ingresa a la pagina tendra una sesion diferente a Persona B con respecto a los cambios que se hagan en la base de datos, Ademas de que es el codigo que nos per
-key = os.getenv("KEY")
+db = scoped_session(sessionmaker(bind=engine)) # (SQL ALCHEMY)
+key = os.getenv("KEY") # KEY environment variable 
 
 # Get recent books for index
 
-books = db.execute("SELECT * FROM books ORDER BY year DESC").fetchall() 
+books = db.execute("SELECT * FROM books ORDER BY year DESC").fetchall() # Get recent books
 
-# Index Page
-
-@app.route("/", methods=["GET", "POST"]) 
+@app.route("/", methods=["GET", "POST"]) # Index Page
 def index(): 
     if request.method =="GET":
         
@@ -42,11 +38,11 @@ def index():
         booksearchrequest = request.args.get('search') # Get text from the search input 
         booksearch = "%{}%".format(booksearchrequest) # Formating input get  
 
-            # Queries
+        # Queries
         booksearchdata = db.execute("SELECT * FROM books WHERE (author ILIKE :booksearch) OR (title ILIKE :booksearch) OR (isbn ILIKE :booksearch)",{"booksearch":booksearch}).fetchall() # Book search result Query
-        breviews = db.execute("SELECT books.book_id, reviews.content, reviews.rating, books.title, users.username FROM reviews JOIN books ON reviews.book_id = books.book_id JOIN users ON reviews.user_id = users.user_id ORDER BY books.book_id DESC").fetchall() # Get recent comments
+        breviews = db.execute("SELECT books.book_id, reviews.content, reviews.rating, books.title, users.username FROM reviews JOIN books ON reviews.book_id = books.book_id JOIN users ON reviews.user_id = users.user_id ORDER BY reviews.review_id DESC").fetchall() # Get recent comments
             
-            # Check if the result of the search is empty
+        # Check if the result of the search is empty
         bcheck = booksearchdata == [] and booksearchrequest is not None 
     
     return render_template("index.html", bcheck=bcheck, books=books, breviews=breviews, booksearchdata=booksearchdata, booksearchrequest=booksearchrequest)
@@ -147,12 +143,12 @@ def login():
     if request.method =="POST":
 
         # Getting data form inputs
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get("username") # Get username data from form
+        password = request.form.get("password") # Get username data from form
 
         #Queries
-        usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone()
-        passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone()
+        usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone() # Get username
+        passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone() # Get password
 
         # Formatting password & Username
         f_pass = ''.join(passworddata) #Formated password
@@ -162,7 +158,7 @@ def login():
 
         # Check If There's no user
         if usernamedata is None:
-            flash("No username","danger")
+            flash("No username created","danger")
             return redirect(url_for('login'))
 
         else: 
