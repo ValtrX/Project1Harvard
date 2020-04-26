@@ -1,3 +1,3 @@
-from project1 import create_app
+from project1 import index
 
-app = create_app()
+app = index()
