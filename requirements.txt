@@ -3,5 +3,6 @@ Flask-Session
 psycopg2-binary
 SQLAlchemy
 flask_bcrypt
+Werkzeug==0.16.0
 gunicorn
 requests
