@@ -50,7 +50,6 @@ def index():
 @app.route("/book/<int:book_id>", methods=["GET","POST"]) #Book details page
 def book(book_id):
     # Go back last URL
-
     url = request.referrer 
 
     # Queries    
@@ -106,7 +105,7 @@ def book(book_id):
 
             return redirect(url_for('book', book_id=book_id))
     else: 
-        flash("You must be logged in to make a review","danger")
+        flash('You must be <a href="/login">Logged</a>' to make a review','danger')
      
     return render_template("book.html", books=books, book=book, url=url, book_api_total=book_api_total, book_api_avg=book_api_avg, book_reviews=book_reviews)
     
