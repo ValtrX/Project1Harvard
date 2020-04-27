@@ -151,12 +151,13 @@ def login():
 
         # Formatting password & Username
         f_pass = ''.join(passworddata) #Formated password
+        print(f_pass)
 
         pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8') #Passowrd Hashing
         passcrypt = bcrypt.check_password_hash(f_pass, password) # Checking hashed password
 
         # Check If There's no user
-        if usernamedata and passworddata is None:
+        if usernamedata is None:
             flash("No username created","danger")
             return redirect(url_for('login'))
 
