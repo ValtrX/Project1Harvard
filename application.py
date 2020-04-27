@@ -145,23 +145,22 @@ def login():
         username = request.form.get("username") # Get username data from form
         password = request.form.get("password") # Get username data from form
 
-        #Queries
+        # Queries
         usernamedata = db.execute("SELECT username FROM users WHERE username=:username",{"username":username}).fetchone() # Get username
         passworddata = db.execute("SELECT password FROM users WHERE username=:username",{"username":username}).fetchone() # Get password
-
-        # Formatting password & Username
-        f_pass = ''.join(passworddata) #Formated password
-        print(f_pass)
-
-        pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8') #Passowrd Hashing
-        passcrypt = bcrypt.check_password_hash(f_pass, password) # Checking hashed password
-
+        
         # Check If There's no user
         if usernamedata is None:
             flash("No username created","danger")
             return redirect(url_for('login'))
 
         else: 
+
+            # Password Formatting and Checking
+            f_pass = ''.join(passworddata) #Formated password
+            pw_hash = bcrypt.generate_password_hash(f_pass).decode('utf-8') #Passowrd Hashing
+            passcrypt = bcrypt.check_password_hash(f_pass, password) # Checking hashed password
+
             for password_data in passworddata: #Search for a user and then compare the passwords
                 if passcrypt:
                     session["logged_in"] = True
@@ -171,7 +170,7 @@ def login():
                     return redirect(url_for('index'))
 
                 else:
-                    flash("Password does not match","danger") #If the password does not match say "Password does not match"
+                    flash("Wrong password!","danger") #If the password does not match say "Password does not match"
                     return redirect(url_for('login'))
 
     return render_template("login.html")
@@ -180,7 +179,7 @@ def login():
 @app.route("/logout") #Logout function
 def logout():
     session.clear()
-    flash("Bye! You are logged out now","danger")
+    flash("Come back soon! You are logged out now","danger")
     return redirect(url_for('login'))
 
 
