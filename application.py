@@ -156,7 +156,7 @@ def login():
         passcrypt = bcrypt.check_password_hash(f_pass, password) # Checking hashed password
 
         # Check If There's no user
-        if usernamedata is None:
+        if usernamedata and passworddata is None:
             flash("No username created","danger")
             return redirect(url_for('login'))
 
